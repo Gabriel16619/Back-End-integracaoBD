@@ -28,6 +28,8 @@ const HEADER = {
 /**************************MENSAGENS DE SUCESSO DO PROJETO*******************************/
 const SUCCESS_REQUEST = { status: true, status_code: 200, message: 'Requisição bem Sucedida!' }
 const SUCCES_CREATED_ITEM = { status: true, status_code: 201, message: 'Objeto criado!' }
+const SUCCES_UPDATE_ITEM = {status: true, status_code: 200, message: 'Requisição feita com sucesso, item atualizado com sucesso'}
+const SUCCESS_DELETE_ITEM = {status: true, status_code: 202, message: 'Delete bem sucedido'}
 
 module.exports = {
                     HEADER,
@@ -37,5 +39,7 @@ module.exports = {
                     ERROR_NOT_FOUND,
                     ERROR_REQUIRED_FIELDS,
                     SUCCES_CREATED_ITEM,
-                    ERROR_CONTENT_TYPE
+                    ERROR_CONTENT_TYPE,
+                    SUCCES_UPDATE_ITEM,
+                    SUCCESS_DELETE_ITEM
 }

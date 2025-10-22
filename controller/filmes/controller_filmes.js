@@ -39,7 +39,6 @@ const listarFilmes = async function () {
     }
 }
 
-
 //retorna um filme filtrando pelo id
 const buscarFilmeId = async function (id) {
 
@@ -132,7 +131,6 @@ const inserirFilme = async function (filme, contentType) {
     }
 
 }
-
 
 //atualiza um filme filtrando pelo id
 const atualizarFilme = async function (filme, id, contentType) {
@@ -272,5 +270,5 @@ module.exports = {
     buscarFilmeId,
     inserirFilme,
     atualizarFilme,
-    excluirFilme
+    excluirFilme,
 }

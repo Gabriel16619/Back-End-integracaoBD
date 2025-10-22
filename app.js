@@ -29,7 +29,9 @@ app.use((request, response, next) => {
     next()//proximo
 })
 const controllerFilme = require('./controller/filmes/controller_filmes.js')
+const controllerGenero = require ('./controller/genero/controller_genero.js')
 //Endpoint para CRUD  de filmes
+
 
 //retorna a lista de filmes
 app.get('/v1/locadora/filme', cors(), async function (req, res) {
@@ -50,6 +52,25 @@ app.get('/v1/locadora/filme/:id', cors(), async function (req, res) {
     res.json(filme)
 })
 
+//retorna os generos
+app.get('/v1/locadora/genero', cors(), async function (req, res) {
+
+    //chama a função da controller para retornar todos os generos
+    /* console.log(genero, "aaaaaaa") */
+    let genero = await controllerGenero.listarGenero()
+
+    res.status(genero.status_code)
+    res.json(genero)
+})
+
+app.get('/v1/locadora/genero/:id', cors(), async function (req, res) {
+    let idGenero = req.params.id
+    //recebece o id enviado pela requisição
+    let genero = await controllerGenero.buscarGeneroId(idGenero)
+    res.status(genero.status_code)
+    res.json(genero)
+})
+
 //insere um novo filme no banco de dados
 app.post('/v1/locadora/filme', cors(), bodyParserJSON, async function (req, res){
 
@@ -63,6 +84,20 @@ app.post('/v1/locadora/filme', cors(), bodyParserJSON, async function (req, res)
 
     res.status(filme.status_code)
     res.json(filme)
+})
+
+//inserir um novo genero no banco de dados
+app.post('/v1/locadora/genero', cors(), bodyParserJSON, async function (req, res) {
+
+    //recebe um objeto pelo body da requisição
+    let dadosBody = req.dadosBody
+    let contentType = req.headers['content-type']
+
+    //chama a função da controler para inserir filme, enviamos os dados do body e  content type
+
+    let genero = await controllerGenero.inserirGenero(dadosBody, contentType)
+    res.status(genero.status_code)
+    res.json(genero)
 })
 
 app.put('/v1/locadora/filme/:id', cors(), bodyParserJSON , async function (req, res) {

@@ -97,7 +97,7 @@ const inserirGenero = async function (genero, contentType) {
 
                         return MESSAGE.HEADER
                     } else {
-                        console.log("BBBBBBB")
+
                         return MESSAGE.ERROR_INERNAL_SERVER_MODEL //500
                     }
 
@@ -113,15 +113,12 @@ const inserirGenero = async function (genero, contentType) {
             return MESSAGE.ERROR_CONTENT_TYPE //415
         }
     } catch (error) {
-        console.log(error, "AAAAAAAAAAA")
 
         return MESSAGE_DEFAULT.ERROR_INERNAL_SERVER_CONTROLLER //500
 
     }
 
 }
-
-
 
 const validarDadosGenero = async function (genero) {
 
@@ -131,10 +128,10 @@ const validarDadosGenero = async function (genero) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = 'Atributo [NOME] inválido!!!'
         return MESSAGE.ERROR_REQUIRED_FIELDS//400
 
+
     } else if (genero.descricao == undefined) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = 'Atributo [DESCRICAO] inválido!!!'
         return MESSAGE.ERROR_REQUIRED_FIELDS//400
-
     } else {
         return false
     }

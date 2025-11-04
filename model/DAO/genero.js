@@ -11,7 +11,7 @@ const { PrismaClient } = require('../../generated/prisma')
 //Cria um objeto do prisma client para manipular os scripts SQL
 const prisma = new PrismaClient()
 
-// Pegar os generos detodos os filmes.
+// Pegar os generos de todos os filmes.
 const getSelectBYGenero = async function (params) {
     try{
         let sql = `select * from tbl_genero`

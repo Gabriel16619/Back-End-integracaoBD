@@ -7,6 +7,11 @@
  ****************************************************************************************/
 //import do arquivo DAO para manipulr o CRUD no  BD
 const filmeDAO = require('../../model/DAO/filme.js')
+
+//import da controller_filme_genero
+const controller_filme_genero = require('./controller_filme_genero.js')
+
+//import das messages
 const MESSAGE_DEFAULT = require('./modulo/config_messages.js')
 
 //retona uma lista de filmes
@@ -23,18 +28,36 @@ const listarFilmes = async function () {
         /* console.log(result) */
         if (result) {
             if (result.length > 0) {
+
+               /*  let arrayFilmes = [] */
+                //processamento para adicionar os generos em cada filme
+                for(filme of result){
+                    console.log(filme, "1")
+                    let resultGeneros = await controller_filme_genero.listarGenerosIdFilme(filme.id)
+                    console.log(resultGeneros, "chegou aqui 2")
+                 if(resultGeneros.status_code == 200){
+                filme.genero = resultGeneros.response.filmes_generos 
+
+                // tratativa para os filmes sem genero
+                 }/* else if (filme.genero == null) {
+                    let arrayNull = []
+                    return arrayNull
+                 } */
+                }
                 MESSAGE.HEADER.status = MESSAGE.SUCCESS_REQUEST.status
                 MESSAGE.HEADER.status_code = MESSAGE.SUCCESS_REQUEST.status_code
                 MESSAGE.HEADER.response.films = result
 
                 return MESSAGE.HEADER //200
             } else {
+                
                 return MESSAGE.ERROR_NOT_FOUND //404
             }
         } else {
             return ERROR_INERNAL_SERVER_MODEL //500
         }
     } catch (eror) {
+        console.log(eror)
         return MESSAGE.ERROR_INERNAL_SERVER_CONTROLLER //500
     }
 }
@@ -100,19 +123,44 @@ const inserirFilme = async function (filme, contentType) {
                     //chama a função para receber o id gerado no banco de dados
                     let lastIdFIlme = await filmeDAO.getSelectLastIdFilms()
 
-                    if(lastIdFIlme){
+                    if (lastIdFIlme) {
 
-                    //adiciona no Json de filme o ID que foi gerado no BD
-                    filme.id                    =  lastIdFIlme 
-                    MESSAGE.HEADER.status       = MESSAGE.SUCCES_CREATED_ITEM.status
-                    MESSAGE.HEADER.status_code  = MESSAGE.SUCCES_CREATED_ITEM.status_code
-                    MESSAGE.HEADER.message      = MESSAGE.SUCCES_CREATED_ITEM.message
-                    MESSAGE.HEADER.response     = filme
+                        // processamento para inserir dados na tabela de relção entre filme e genero
+                        //Repetição para pegar cada genero e enviar para o DAO do filmeGenero
+                       /*  filme.genero.forEach(async function(genero) { */
+                       for(genero of filme.genero){
+                            let filmeGenero =   { 
+                                                id: lastIdFIlme, 
+                                                id_genero: genero.id
+                                                }
 
-                    return MESSAGE.HEADER
-                }else{
-                    return MESSAGE.ERROR_INERNAL_SERVER_MODEL //500
-                }
+                            let resultFilmeGenero = await controller_filme_genero.inserirFilmeGenero(filmeGenero, contentType)
+
+                            if(resultFilmeGenero.status_code != 201)
+                                return MESSAGE.ERROR_RELATION_TABLE //200 porem com problemas na tabela de relação
+                        };
+
+                        //adiciona no Json de filme o ID que foi gerado no BD
+                        filme.id = lastIdFIlme
+                        MESSAGE.HEADER.status = MESSAGE.SUCCES_CREATED_ITEM.status
+                        MESSAGE.HEADER.status_code = MESSAGE.SUCCES_CREATED_ITEM.status_code
+                        MESSAGE.HEADER.message = MESSAGE.SUCCES_CREATED_ITEM.message
+
+                        //processamento para trazer dados dos generos cadastrados na tabela de relação
+                        delete filme.genero
+                        //pesquisa o no bd quai os generos e o seus dados que foram inseridos na tabela de relação
+                        let resultGenerosFilme = await controller_filme_genero.listarGenerosIdFilme(lastIdFIlme)
+
+                        //adiciona novamente o atributo genero comtodas as informação es inseridas na tabela relacionamento (ID, Nome)
+                        filme.genero = resultGenerosFilme.response.filmes_generos
+
+
+                        MESSAGE.HEADER.response = filme
+
+                        return MESSAGE.HEADER
+                    } else {
+                        return MESSAGE.ERROR_INERNAL_SERVER_MODEL //500
+                    }
 
                 } else {
                     return MESSAGE.ERROR_INERNAL_SERVER_MODEL//500
@@ -169,11 +217,11 @@ const atualizarFilme = async function (filme, id, contentType) {
 
                         return MESSAGE.HEADER
                     } else {
-                      
+
                         return MESSAGE.ERROR_INERNAL_SERVER_MODEL//500
                     }
                 } else {
-                    
+
                     return validarId // retorno da funçaõ de buscarFilmeId (400 ou 404 ou 500)
                 }
 
@@ -184,7 +232,7 @@ const atualizarFilme = async function (filme, id, contentType) {
             return MESSAGE.ERROR_CONTENT_TYPE //415
         }
     } catch (error) {
-       
+
         return MESSAGE_DEFAULT.ERROR_INERNAL_SERVER_CONTROLLER //500
 
     }
@@ -196,35 +244,35 @@ const atualizarFilme = async function (filme, id, contentType) {
 const excluirFilme = async function (id) {
     let MESSAGE = JSON.parse(JSON.stringify(MESSAGE_DEFAULT))
 
- try{
+    try {
 
-    if(id != '' && id!= null && id != undefined && !isNaN(id)){
+        if (id != '' && id != null && id != undefined && !isNaN(id)) {
 
-        let excluirFilme = await buscarFilmeId(id)
+            let excluirFilme = await buscarFilmeId(id)
 
-        if (excluirFilme.status_code == 200) {
-        let result = await filmeDAO.setDeleteFilms(parseInt(id))
-     if(result){
-        MESSAGE.HEADER.status = MESSAGE.SUCCESS_DELETE_ITEM.status
-        MESSAGE.HEADER.status_code = MESSAGE.SUCCESS_DELETE_ITEM.status_code
-        MESSAGE.HEADER.message = MESSAGE.SUCCESS_DELETE_ITEM.message
+            if (excluirFilme.status_code == 200) {
+                let result = await filmeDAO.setDeleteFilms(parseInt(id))
+                if (result) {
+                    MESSAGE.HEADER.status = MESSAGE.SUCCESS_DELETE_ITEM.status
+                    MESSAGE.HEADER.status_code = MESSAGE.SUCCESS_DELETE_ITEM.status_code
+                    MESSAGE.HEADER.message = MESSAGE.SUCCESS_DELETE_ITEM.message
 
-        
-        return MESSAGE.HEADER
-     }else{
-        return MESSAGE.ERROR_INERNAL_SERVER_MODEL //500
-     }
-     }else{
-       return excluirFilme
-     }
-    }else{
-        MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = 'Atributo [ID] inválido!!'
-        return MESSAGE.ERROR_REQUIRED_FIELDS // 400
+
+                    return MESSAGE.HEADER
+                } else {
+                    return MESSAGE.ERROR_INERNAL_SERVER_MODEL //500
+                }
+            } else {
+                return excluirFilme
+            }
+        } else {
+            MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = 'Atributo [ID] inválido!!'
+            return MESSAGE.ERROR_REQUIRED_FIELDS // 400
+        }
+    } catch (error) {
+
+        return MESSAGE.ERROR_INERNAL_SERVER_MODEL
     }
- }catch(error){
-
-    return MESSAGE.ERROR_INERNAL_SERVER_MODEL
- }
 }
 
 //validação dos dados de cadatro do filme

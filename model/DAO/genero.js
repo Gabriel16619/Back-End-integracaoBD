@@ -80,8 +80,7 @@ const getInsertGenero = async function (genero) {
           nome, 
           descricao
         ) VALUES (
-          '${genero.nome}',
-          '${genero.descricao}'
+          '${genero.nome}'
         )
       `;
   

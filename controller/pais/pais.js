@@ -75,13 +75,16 @@ const inserirPais = async function (pais, contentType) {
             let validarDados = await validarDadosPais(pais)
 
             if(!validarDados){
+                console.log(validarDados, "AAAA")
                 let result = await paisDAO.insertPais()
 
                 if(result){
+                    console.log(result, "BBBB")
                     let lastIdPais = await paisDAO.getSelectByIdPais()
                     if(lastIdPais){
 
-                        pais.id                    =  lastIdPais
+                        console.log(lastIdPais, "CCCCC")
+                        pais.id                     =  lastIdPais
                         MESSAGE.HEADER.status       = MESSAGE.SUCCES_CREATED_ITEM.status
                         MESSAGE.HEADER.status_code  = MESSAGE.SUCCES_CREATED_ITEM.status_code
                         MESSAGE.HEADER.message      = MESSAGE.SUCCES_CREATED_ITEM.message
@@ -102,17 +105,18 @@ const inserirPais = async function (pais, contentType) {
         }
 
       }catch(error){
+        console.log(error, "DDDD")
         return MESSAGE_DEFAULT.ERROR_INERNAL_SERVER_CONTROLLER //500
       }
     
 }
 const validarDadosPais = async function (pais) {
-    if (pais.nome == '' || filme.nome == null || filme.nome == undefined || filme.nome.length > 100) {
+    if (pais.nome == '' || pais.nome == null || pais.nome == undefined || pais.nome.length > 100) {
         MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = 'Atributo [NOME] inválido!!!'
         return MESSAGE.ERROR_REQUIRED_FIELDS//400
 
 }else if(pais.continente == undefined) {
-    MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = 'Atributo [SINOPSE] inválido!!!'
+    MESSAGE.ERROR_REQUIRED_FIELDS.invalid_field = 'Atributo [CONTINENTE] inválido!!!'
     return MESSAGE.ERROR_REQUIRED_FIELDS//400
 
 }else {

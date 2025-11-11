@@ -49,7 +49,10 @@ const insertPais = async function (pais) {
         )values(
         ('${pais.nome}',
         ${pais.continente}
-        )`
+        )`;
+
+        console.log(sql, "AAAA");
+        
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -59,6 +62,7 @@ const insertPais = async function (pais) {
             return false
         }
     }catch(error){
+        console.log(error, "AAAA");
         return error
     }
 }

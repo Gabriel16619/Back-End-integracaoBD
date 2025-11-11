@@ -33,6 +33,7 @@ const controllerGenero = require('./controller/genero/controller_genero.js')
 const controllerClassificacao = require('./controller/classificacao/classificacao.js')
 const controllerEmpresa =  require('./controller/empresa/empresa.js')
 const controllerPais = require('./controller/pais/pais.js')
+const controllerFilmeGenero = require ('./controller/filmes/controller_filme_genero.js')
 //Endpoint para CRUD  de filmes
 
 
@@ -119,6 +120,7 @@ app.get('/v1/locadora/pais/:id', cors(), async function (req, res) {
     res.json(pais)
 })
 
+
 /*/************************************************************************************************************************/
 
 // insere uma nova empresa
@@ -167,7 +169,7 @@ app.post('/v1/locadora/pais', cors(), bodyParserJSON, async function (req, res){
     //recebec o objeto json pelo body da requisição
     let dadosBody = req.body
     let contentType = req.headers['content-type']
-    let pais = await controllerFilme.inserirFilme(dadosBody, contentType)
+    let pais = await controllerPais.inserirPais(dadosBody, contentType)
     res.status(pais.status_code)
     res.json(pais)
 })

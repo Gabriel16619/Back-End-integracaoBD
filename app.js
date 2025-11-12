@@ -34,6 +34,7 @@ const controllerClassificacao = require('./controller/classificacao/classificaca
 const controllerEmpresa =  require('./controller/empresa/empresa.js')
 const controllerPais = require('./controller/pais/pais.js')
 const controllerAutor = require('./controller/autor/crontroller_autor.js')
+const controllerDiretor = require('./controller/diretor/controller_diretor.js')
 //Endpoint para CRUD  de filmes
 
 
@@ -136,6 +137,24 @@ app.get('/v1/locadora/autor/:id', cors(), async function (req, res) {
     res.json(autor)
 })
 
+//listar diretor
+app.get('/v1/locadora/diretor', cors(), async function (req, res) {
+    //chama a função da controller para retornar todos os filmes
+    let diretor = await controllerDiretor.listarDiretor()
+    res.status(diretor.status_code)
+    res.json(diretor)
+})
+
+//retorna um filme filtrando pelo id
+app.get('/v1/locadora/diretor/:id', cors(), async function (req, res) {
+    
+    let idDiretor = req.params.id
+//recebe o id enviado na requisição por id
+    let diretor = await controllerDiretor.diretorId(idDiretor)
+    res.status(diretor.status_code)
+    res.json(diretor)
+})
+/*/************************************************************************************************************************/
 // insere uma novo autor
 app.post('/v1/locadora/autor', cors(), bodyParserJSON, async function (req, res){
     let dadosBody = req.body
@@ -145,7 +164,7 @@ app.post('/v1/locadora/autor', cors(), bodyParserJSON, async function (req, res)
     res.status(autor.status_code)
     res.json(autor)
 })
-/*/************************************************************************************************************************/
+
 
 // insere uma nova empresa
 app.post('/v1/locadora/empresa', cors(), bodyParserJSON, async function (req, res){
@@ -198,6 +217,14 @@ app.post('/v1/locadora/pais', cors(), bodyParserJSON, async function (req, res){
     res.json(pais)
 })
 
+app.post('/v1/locadora/diretor', cors(), bodyParserJSON, async function (req, res){
+    let dadosBody = req.body
+    let contentType = req.headers['content-type']
+    let diretor = await controllerDiretor.inserirDiretor(dadosBody, contentType)
+    res.status(diretor.status_code)
+    res.json(diretor)
+})
+
 app.put('/v1/locadora/filme/:id', cors(), bodyParserJSON , async function (req, res) {
 
     //recebe os dados do body
@@ -215,6 +242,7 @@ app.put('/v1/locadora/filme/:id', cors(), bodyParserJSON , async function (req, 
     res.status(filme.status_code)
     res.json(filme)
 })
+
 /****************************************************** */
 app.delete('/v1/locadora/filme/:id', cors(), async function (req, res) {
     
@@ -240,6 +268,15 @@ app.delete('/v1/locadora/autor/:id', cors(), async function (req, res) {
     res.status(autor.status_code)
     console.log(autor.status_code)
     res.json(autor)
+})
+
+app.delete('/v1/locadora/diretor/:id', cors(), async function (req, res) {
+    
+    let idDiretor = req.params.id
+    let diretor = await controllerDiretor.deletarDiretor(idDiretor)
+    res.status(diretor.status_code)
+  
+    res.json(diretor)
 })
 /************************************************************************ */
 //ultima linha do codigo 

@@ -33,7 +33,7 @@ const controllerGenero = require('./controller/genero/controller_genero.js')
 const controllerClassificacao = require('./controller/classificacao/classificacao.js')
 const controllerEmpresa =  require('./controller/empresa/empresa.js')
 const controllerPais = require('./controller/pais/pais.js')
-const controllerFilmeGenero = require ('./controller/filmes/controller_filme_genero.js')
+const controllerAutor = require('./controller/autor/crontroller_autor.js')
 //Endpoint para CRUD  de filmes
 
 
@@ -57,7 +57,6 @@ app.get('/v1/locadora/filme/:id', cors(), async function (req, res) {
     res.json(filme)
 })
 
-/**********************************************************************************************************************/
 //retorna os generos
 app.get('/v1/locadora/genero', cors(), async function (req, res) {
 
@@ -77,8 +76,7 @@ app.get('/v1/locadora/genero/:id', cors(), async function (req, res) {
     res.json(genero)
 })
 
-/***********************************************************************************************************************/
-
+//retorna as classificões
 app.get('/v1/locadora/classificacao', cors(), async function (req, res) {
     let classificacao = await controllerClassificacao.listarclassificacao()
     res.status(classificacao.status_code)
@@ -92,7 +90,6 @@ app.get('/v1/locadora/classificacao/:id', cors(), async function (req, res) {
     res.json(Classificacao)
 })
 
-//** *******************************************************************************************************************/
 app.get('/v1/locadora/empresa', cors(), async function (req, res) {
     let empresa = await controllerEmpresa.listarEmpresa()
     res.status(empresa.status_code)
@@ -121,6 +118,33 @@ app.get('/v1/locadora/pais/:id', cors(), async function (req, res) {
 })
 
 
+//retorna lista de autores
+app.get('/v1/locadora/autor', cors(), async function (req, res) {
+    let autor = await controllerAutor.listarAutor()
+    res.status(autor.status_code)
+    res.json(autor)
+})
+
+//retorna o autor por id
+
+app.get('/v1/locadora/autor/:id', cors(), async function (req, res) {
+    
+    let  idAutor = req.params.id
+//recebe o id enviado na requisição por id
+    let autor = await controllerAutor.autorId(idAutor)
+    res.status(autor.status_code)
+    res.json(autor)
+})
+
+// insere uma novo autor
+app.post('/v1/locadora/autor', cors(), bodyParserJSON, async function (req, res){
+    let dadosBody = req.body
+    let contentType = req.headers['content-type']
+    let autor = await controllerAutor.inserirAutor(dadosBody, contentType)
+    console.log(autor, "App.js")
+    res.status(autor.status_code)
+    res.json(autor)
+})
 /*/************************************************************************************************************************/
 
 // insere uma nova empresa
@@ -191,7 +215,7 @@ app.put('/v1/locadora/filme/:id', cors(), bodyParserJSON , async function (req, 
     res.status(filme.status_code)
     res.json(filme)
 })
-
+/****************************************************** */
 app.delete('/v1/locadora/filme/:id', cors(), async function (req, res) {
     
     let idFilme = req.params.id
@@ -209,6 +233,15 @@ app.delete('/v1/locadora/empresa/:id', cors(), async function (req, res) {
     res.json(dados)
 })
 
+app.delete('/v1/locadora/autor/:id', cors(), async function (req, res) {
+    
+    let idAutor = req.params.id
+    let autor = await controllerAutor.deletarAutor(idAutor)
+    res.status(autor.status_code)
+    console.log(autor.status_code)
+    res.json(autor)
+})
+/************************************************************************ */
 //ultima linha do codigo 
 app.listen(PORT, function () {
     console.log('API aguardando requisição')

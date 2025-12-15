@@ -31,7 +31,7 @@ const getSelectBYAutor= async function (params) {
 // mostra a empresa pelo id
 const getSelectBYIdAutor = async function (id) {
     try{
-        let sql = `select * from tbl_autor where id_autor=${id}`
+        let sql = `select * from tbl_ator where id_ator=${id}`
         let result = await prisma.$queryRawUnsafe(sql)
 
         if (Array.isArray(result)) {
@@ -46,7 +46,7 @@ const getSelectBYIdAutor = async function (id) {
     }
 }
  // adiciona uma nova empresa
-const getInsertAutor = async function (autor) {
+const getInsertAutor = async function (ator) {
     try {
       // Corrigindo o SQL (faltavam vírgulas, aspas e parênteses errados)
       let sql = `
@@ -55,9 +55,9 @@ const getInsertAutor = async function (autor) {
           biografia,
          local_nascimento
         ) VALUES (
-          '${autor.nome}',
-          '${autor.biografia}',
-          '${autor.local_nascimento}'
+          '${ator.nome}',
+          '${ator.biografia}',
+          '${ator.local_nascimento}'
         )
       `;
 
@@ -80,7 +80,7 @@ const getInsertAutor = async function (autor) {
 
 const deleteByIdAutor = async function (id) {
     try {
-        let sql = `DELETE FROM tbl_autor where id_autor = ${id}`
+        let sql = `DELETE FROM tbl_ator where id_ator = ${id}`
 
         //$executeRawUnsafe()  -> permite apenas executar scripts sql que não tem retorno de dados (INSERT, UPDATE, DELETE)
         let result = await prisma.$executeRawUnsafe(sql)
@@ -101,7 +101,7 @@ const getSelectLastIdAutor = async function () {
 
     try {
         //Script SQL 
-        let sql = `select id_autor from tbl_autor order by id_autor desc limit 1`
+        let sql = `select id_ator from tbl_autor order by id_ator desc limit 1`
 
        
         //Executa no BD o script SQL
@@ -112,7 +112,7 @@ const getSelectLastIdAutor = async function () {
         //validação para identificar se o retorno do banco e um array, vazio ou com dados
 
         if (Array.isArray(result)) {
-            return Number(result[0].id_autor)
+            return Number(result[0].id_ator)
         } else {
             return false
         }
